@@ -1,0 +1,32 @@
+﻿@model Sample_Web_Project.Models.User
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<form method="post" asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label for="email" class="form-label" asp-for="Email"></label>
+        <input asp-for="Email" type="text" class="form-control" id="email">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label" asp-for="Password"></label>
+        <input asp-for="Password" type="text" class="form-control" id="password">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="fullName" class="form-label" asp-for="FullName"></label>
+        <input asp-for="FullName" type="text" class="form-control" id="fullName">
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="birthOfDate" class="form-label" asp-for="BirthDate"></label>
+        <input asp-for="BirthDate" type="text" class="form-control" id="birthOfDate">
+        <span asp-validation-for="BirthDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a class="btn btn-danger" asp-action="Index">Back</a>
+</form>

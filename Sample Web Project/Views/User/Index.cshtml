@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Sample_Web_Project.Models.User>
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Products List</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a asp-controller="User" asp-action="Create" class="btn btn-primary"> Create new User</a>
+        </div>
+    </div>
+    <br />
+
+    @if (Model.Count() > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Date of Birth</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th scope="row">@item.Id</th>
+                        <td>@item.Email</td>
+                        <td>@item.FullName</td>
+                        <td>@item.BirthDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No User created yet</p>
+    }
+
+
+
+
+
+</div>
+

@@ -18,7 +18,6 @@ namespace Sample_Web_Project.Controllers
             _db = db;
         }
 
-        [Authorize]
         public IActionResult Index()
         {
             IEnumerable<Product> productList = _db.Products;
