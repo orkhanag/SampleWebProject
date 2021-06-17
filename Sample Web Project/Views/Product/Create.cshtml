@@ -1,0 +1,23 @@
+﻿@model  Sample_Web_Project.Models.Product
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<form method="post" asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label" asp-for="Name"></label>
+        <input asp-for="Name" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label" asp-for="Price"></label>
+        <input asp-for="Price" type="text" class="form-control" id="exampleInputPassword1">
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a class="btn btn-danger" asp-action="Index">Back</a>
+</form>
+
