@@ -42,5 +42,25 @@ namespace Sample_Web_Project.Controllers
 
             return View(user);
         }
+
+        public IActionResult Edit(int id)
+        {
+            var user = from u in _db.Users where u.Id == id select u;
+            return View(user.FirstOrDefault());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Update(user);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

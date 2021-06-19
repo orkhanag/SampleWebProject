@@ -1,11 +1,11 @@
 ﻿@model Sample_Web_Project.Models.User
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
 <h1>Create</h1>
 
-<form method="post" asp-action="Create">
+<form method="post" asp-action="Edit">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="mb-3">
