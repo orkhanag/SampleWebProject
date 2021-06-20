@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sample_Web_Project.Data;
+using Sample_Web_Project.Helpers;
 using Sample_Web_Project.Models;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace Sample_Web_Project.Controllers
 
         public IActionResult Index()
         {
+            //IEnumerable<User> userList = _db.Users;
+
             IEnumerable<User> userList = _db.Users;
             return View(userList);
         }
@@ -60,7 +63,7 @@ namespace Sample_Web_Project.Controllers
                 return RedirectToAction("Index");
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
