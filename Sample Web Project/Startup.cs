@@ -34,7 +34,6 @@ namespace Sample_Web_Project
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(config =>
                 {
-                    config.Cookie.Name = "Auth.Cookie";
                     config.LoginPath = "/Home/Login";
                 });
         }

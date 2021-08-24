@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -27,27 +28,42 @@ namespace Sample_Web_Project.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();
         }
 
-        public IActionResult Login()
+        [HttpGet]
+        public IActionResult Login(string returnUrl)
         {
-            var claims = new List<Claim>()
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(string username, string password, string returnUrl)
+        {
+            if (username == "orkhan" && password == "orxan1177")
             {
-                new Claim(ClaimTypes.Name, "Orkhan"),
-                new Claim(ClaimTypes.Email, "orkhan@mail.com"),
-                new Claim("Motto", "Slam")
-            };
+                ViewData["ReturnUrl"] = returnUrl;
+                var claims = new List<Claim>();
+                claims.Add(new Claim("username", username));
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, username));
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity); 
+                await HttpContext.SignInAsync(claimsPrincipal);
+                return Redirect(returnUrl);
+            }
+            TempData["Error"] = "Username or Password incorrect";
+            return View("login");
+        }
 
-            var identity = new ClaimsIdentity(claims, "claims");
-
-            var userPirincipal = new ClaimsPrincipal(new[] { identity});
-
-            HttpContext.SignInAsync(userPirincipal);
-
-            return RedirectToAction("Index");
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Redirect("/");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
