@@ -14,13 +14,6 @@ namespace Sample_Web_Project.Controllers
 {
     public class UserController : Controller
     {
-        private readonly ApplicationDbContext _db;
-
-        public UserController(ApplicationDbContext db)
-        {
-            _db = db;
-        }
-
 
         private readonly ApplicationDbContext _db;
 
@@ -49,7 +42,7 @@ namespace Sample_Web_Project.Controllers
             {
                 _db.Add(user);
                 _db.SaveChanges();
-               return await Login(user.Email, user.Password, "Home", true);
+                return await Login(user.Email, user.Password, "Home", true);
             }
             else
             {
@@ -68,24 +61,28 @@ namespace Sample_Web_Project.Controllers
         public async Task<IActionResult> Login(string email, string password, string returnUrl, bool isRegister = false)
         {
             var users = _db.Users;
-            if (users.Where(u => u.Email == email).FirstOrDefault().Email == email && users.Where(u => u.Password == password).FirstOrDefault().Password == password)
+            if (users.Count() > 0)
             {
-                ViewData["ReturnUrl"] = returnUrl;
-                var claims = new List<Claim>();
-                claims.Add(new Claim("email", email));
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, email));
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                await HttpContext.SignInAsync(claimsPrincipal);
-                if (isRegister)
+                if (users.Where(u => u.Email == email).FirstOrDefault().Email == email && users.Where(u => u.Password == password).FirstOrDefault().Password == password)
                 {
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    return Redirect(returnUrl);
+                    ViewData["ReturnUrl"] = returnUrl;
+                    var claims = new List<Claim>();
+                    claims.Add(new Claim("email", email));
+                    claims.Add(new Claim(ClaimTypes.NameIdentifier, email));
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    await HttpContext.SignInAsync(claimsPrincipal);
+                    if (isRegister)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return Redirect(returnUrl);
+                    }
                 }
             }
+
             TempData["Error"] = "Username or Password incorrect";
             return View("login");
         }
