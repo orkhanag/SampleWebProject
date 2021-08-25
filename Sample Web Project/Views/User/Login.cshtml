@@ -1,6 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Sample_Web_Project.Models.User
 @{
     var returnUrl = ViewData["ReturnUrl"] as string;
     var error = TempData["Error"] as string;
@@ -11,8 +9,18 @@
 {
 <h2 class="alert-danger" style="padding:20px;">@error</h2>
 }
-<form action="/User/Login?ReturnUrl=@System.Net.WebUtility.UrlEncode(returnUrl)" method="post">
-    <input type="text" name="username" placeholder="Username"/>
-    <input type="password" name="password" placeholder="Password"/>
-    <input type="submit"  value="login" />
-</form> 
+
+<form method="post" action="/user/login?ReturnUrl=@System.Net.WebUtility.UrlEncode(returnUrl)">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label for="email" class="form-label" asp-for="Email"></label>
+        <input asp-for="Email" type="text" class="form-control" id="email">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label" asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" id="password">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
