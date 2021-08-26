@@ -60,10 +60,9 @@ namespace Sample_Web_Project.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password, string returnUrl, bool isRegister = false)
         {
-            var users = _db.Users;
-            if (users.Count() > 0)
+            var user = _db.Users.Where(u => u.Email == email).FirstOrDefault();
+            if (user != null)
             {
-                var user = users.Where(u => u.Email == email).FirstOrDefault();
                 if (BCrypt.Net.BCrypt.Verify(password, user.Password))
                 {
                     var claims = new List<Claim>();
