@@ -28,6 +28,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
                         </li>
+                    </ul>
+                    <ul class="float-right navbar-nav">
                         @if (!User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">

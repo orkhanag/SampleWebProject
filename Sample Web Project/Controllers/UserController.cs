@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sample_Web_Project.Data;
 using Sample_Web_Project.Models;
+using Sample_Web_Project.Services;
+using Sample_Web_Project.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +18,12 @@ namespace Sample_Web_Project.Controllers
     {
 
         private readonly ApplicationDbContext _db;
+        private readonly IMailService mailService;
 
-        public UserController(ApplicationDbContext db)
+        public UserController(ApplicationDbContext db, IMailService mailService = null)
         {
             _db = db;
+            this.mailService = mailService;
         }
 
         public IActionResult Index()
@@ -44,7 +48,7 @@ namespace Sample_Web_Project.Controllers
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 _db.Add(user);
                 _db.SaveChanges();
-                return await Login(user.Email, rawPass, "Home", true);
+                return await Login(user.Email, rawPass);
             }
             else
                 return View();
@@ -58,7 +62,7 @@ namespace Sample_Web_Project.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password, string returnUrl, bool isRegister = false)
+        public async Task<IActionResult> Login(string email, string password, string returnUrl = "")
         {
             var user = _db.Users.Where(u => u.Email == email).FirstOrDefault();
             if (user != null)
@@ -72,7 +76,7 @@ namespace Sample_Web_Project.Controllers
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                     await HttpContext.SignInAsync(claimsPrincipal);
-                    if (isRegister)
+                    if (returnUrl == "")
                         return RedirectToAction("Index", "Home");
                     else
                     {
@@ -82,9 +86,32 @@ namespace Sample_Web_Project.Controllers
                     }
                 }
             }
-
             TempData["Error"] = "Username or Password incorrect";
             return View("login");
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword([FromForm]MailRequest mailRequest)
+        {
+
+            try
+            {
+                mailRequest.Subject = "Test";
+                mailRequest.Body = "Hello World";
+                await mailService.SendMailAsync(mailRequest);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         [Authorize]

@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sample_Web_Project.Settings;
+using Sample_Web_Project.Services;
 
 namespace Sample_Web_Project
 {
@@ -36,6 +38,8 @@ namespace Sample_Web_Project
                 {
                     config.LoginPath = "/User/Login";
                 });
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailService, MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

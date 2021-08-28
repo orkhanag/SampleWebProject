@@ -7,11 +7,10 @@
 <h1>Login</h1>
 @if (!string.IsNullOrEmpty(error))
 {
-<h2 class="alert-danger" style="padding:20px;">@error</h2>
+    <h2 class="alert-danger" style="padding:20px;">@error</h2>
 }
 
 <form method="post" action="/user/login?ReturnUrl=@System.Net.WebUtility.UrlEncode(returnUrl)">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="mb-3">
         <label for="email" class="form-label" asp-for="Email"></label>
         <input asp-for="Email" type="text" class="form-control" id="email">
@@ -23,4 +22,5 @@
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
+    <a href="/User/ForgotPassword" class="float-right">Forgot your password</a>
 </form>
