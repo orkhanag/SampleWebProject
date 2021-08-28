@@ -91,8 +91,9 @@ namespace Sample_Web_Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult ForgotPassword()
+        public IActionResult ForgotPassword(string isMailSent = "")
         {
+            ViewData["isMailSent"] = isMailSent;
             return View();
         }
         
@@ -100,18 +101,39 @@ namespace Sample_Web_Project.Controllers
         public async Task<IActionResult> ForgotPassword([FromForm]MailRequest mailRequest)
         {
 
+            var user = _db.Users.Where(u => u.Email == mailRequest.ToMail).FirstOrDefault();
+            var resetLink = "https://localhost:44304/User/ResetPassword" + "?userId=" + user.Id;
+
+
+            mailRequest.Subject = "Password reset";
+            mailRequest.Body = resetLink;
+
             try
             {
-                mailRequest.Subject = "Test";
-                mailRequest.Body = "Hello World";
                 await mailService.SendMailAsync(mailRequest);
-                return Ok();
+                return ForgotPassword("200");
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
 
+        [HttpGet]
+        public IActionResult ResetPassword(string userId)
+        {
+            ViewData["UserId"] = userId;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(User user )
+        {
+            var userInsert = _db.Users.Where(u => u.Id == user.Id).FirstOrDefault();
+            userInsert.Password = user.Password;
+            _db.Update(userInsert);
+            _db.SaveChanges();
+            return View();
         }
 
         [Authorize]
