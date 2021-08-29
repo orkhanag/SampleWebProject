@@ -55,7 +55,7 @@ namespace Sample_Web_Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl)
+        public IActionResult Login(string returnUrl = "")
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -96,15 +96,13 @@ namespace Sample_Web_Project.Controllers
             ViewData["isMailSent"] = isMailSent;
             return View();
         }
-        
+
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword([FromForm]MailRequest mailRequest)
+        public async Task<IActionResult> ForgotPassword([FromForm] MailRequest mailRequest)
         {
 
             var user = _db.Users.Where(u => u.Email == mailRequest.ToMail).FirstOrDefault();
-            var resetLink = "https://localhost:44304/User/ResetPassword" + "?userId=" + user.Id;
-
-
+            var resetLink = "https://localhost:44304/User/ResetPassword" + "?zx0ds=" + user.Id;
             mailRequest.Subject = "Password reset";
             mailRequest.Body = resetLink;
 
@@ -120,20 +118,21 @@ namespace Sample_Web_Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult ResetPassword(string userId)
+        public IActionResult ResetPassword(string zx0ds)
         {
-            ViewData["UserId"] = userId;
+            ViewData["UserId"] = zx0ds;
             return View();
         }
 
         [HttpPost]
-        public IActionResult ResetPassword(User user )
+        public IActionResult ResetPassword(User user)
         {
+
             var userInsert = _db.Users.Where(u => u.Id == user.Id).FirstOrDefault();
-            userInsert.Password = user.Password;
+            userInsert.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             _db.Update(userInsert);
             _db.SaveChanges();
-            return View();
+            return RedirectToAction("Login");
         }
 
         [Authorize]
