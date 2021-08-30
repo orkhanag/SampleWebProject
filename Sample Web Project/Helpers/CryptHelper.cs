@@ -1,32 +1,76 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Sample_Web_Project.Helpers
 {
     public static class CryptHelper
     {
-        public static string PasswordHash(string password)
+        public static string EncryptString(string text, string keyString)
         {
-            byte[] salt = new byte[128 / 8];
-            using (var rngCsp = new RNGCryptoServiceProvider())
+            var key = Encoding.UTF8.GetBytes(keyString);
+
+            using (var aesAlg = Aes.Create())
             {
-                rngCsp.GetNonZeroBytes(salt);
+                using (var encryptor = aesAlg.CreateEncryptor(key, aesAlg.IV))
+                {
+                    using (var msEncrypt = new MemoryStream())
+                    {
+                        using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                        using (var swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            swEncrypt.Write(text);
+                        }
+
+                        var iv = aesAlg.IV;
+
+                        var decryptedContent = msEncrypt.ToArray();
+
+                        var result = new byte[iv.Length + decryptedContent.Length];
+
+                        Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
+                        Buffer.BlockCopy(decryptedContent, 0, result, iv.Length, decryptedContent.Length);
+
+                        return Convert.ToBase64String(result);
+                    }
+                }
             }
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+        }
 
-            // derive a 256-bit subkey (use HMACSHA256 with 100,000 iterations)
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
+        public static string DecryptString(string cipherText, string keyString)
+        {
+            var fullCipher = Convert.FromBase64String(cipherText);
 
-            return hashed;
+            var iv = new byte[16];
+            var cipher = new byte[16];
+
+            Buffer.BlockCopy(fullCipher, 0, iv, 0, iv.Length);
+            Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, iv.Length);
+            var key = Encoding.UTF8.GetBytes(keyString);
+
+            using (var aesAlg = Aes.Create())
+            {
+                using (var decryptor = aesAlg.CreateDecryptor(key, iv))
+                {
+                    string result;
+                    using (var msDecrypt = new MemoryStream(cipher))
+                    {
+                        using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                        {
+                            using (var srDecrypt = new StreamReader(csDecrypt))
+                            {
+                                result = srDecrypt.ReadToEnd();
+                            }
+                        }
+                    }
+                    return result;
+                }
+            }
         }
 
     }

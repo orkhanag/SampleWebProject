@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sample_Web_Project.Data;
+using Sample_Web_Project.Helpers;
 using Sample_Web_Project.Models;
 using Sample_Web_Project.Services;
+using Sample_Web_Project.Settings;
 using Sample_Web_Project.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -19,11 +21,13 @@ namespace Sample_Web_Project.Controllers
 
         private readonly ApplicationDbContext _db;
         private readonly IMailService mailService;
+        private readonly CryptSettings _cryptSettings;
 
-        public UserController(ApplicationDbContext db, IMailService mailService = null)
+        public UserController(ApplicationDbContext db, IMailService mailService = null, CryptSettings cryptSettings = null)
         {
             _db = db;
             this.mailService = mailService;
+            _cryptSettings = cryptSettings;
         }
 
         public IActionResult Index()
@@ -102,7 +106,7 @@ namespace Sample_Web_Project.Controllers
         {
 
             var user = _db.Users.Where(u => u.Email == mailRequest.ToMail).FirstOrDefault();
-            var resetLink = "https://localhost:44304/User/ResetPassword" + "?zx0ds=" + user.Id;
+            var resetLink = "https://localhost:44304/User/ResetPassword" + "?u=" + CryptHelper.EncryptString(user.Id.ToString(), _cryptSettings.StringEncriptionKey);
             mailRequest.Subject = "Password reset";
             mailRequest.Body = resetLink;
 
@@ -118,9 +122,9 @@ namespace Sample_Web_Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult ResetPassword(string zx0ds)
+        public IActionResult ResetPassword(string u)
         {
-            ViewData["UserId"] = zx0ds;
+            ViewData["UserId"] = u;
             return View();
         }
 

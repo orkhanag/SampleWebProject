@@ -39,6 +39,7 @@ namespace Sample_Web_Project
                     config.LoginPath = "/User/Login";
                 });
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.Configure<CryptSettings>(Configuration.GetSection("CryptSettings"));
             services.AddTransient<IMailService, MailService>();
         }
 
