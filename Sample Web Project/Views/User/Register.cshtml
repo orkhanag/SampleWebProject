@@ -6,22 +6,27 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label" asp-for="Email"></label>
-        <input asp-for="Email" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <input asp-for="Email" type="text" class="form-control" aria-describedby="emailHelp">
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label" asp-for="Password"></label>
-        <input asp-for="Password" type="password" class="form-control" id="exampleInputPassword1">
+        <input asp-for="Password" type="password" class="form-control">
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label" asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control">
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </divc
+    <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label" asp-for="FullName"></label>
-        <input asp-for="FullName" type="text" class="form-control" id="exampleInputPassword1">
+        <input asp-for="FullName" type="text" class="form-control">
         <span asp-validation-for="FullName" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label" asp-for="BirthDate"></label>
-        <input asp-for="BirthDate" type="date" class="form-control" id="exampleInputPassword1">
+        <input asp-for="BirthDate" type="date" class="form-control">
         <span asp-validation-for="BirthDate" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Register</button>

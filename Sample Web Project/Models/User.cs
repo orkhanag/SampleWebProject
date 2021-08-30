@@ -31,7 +31,6 @@ namespace Sample_Web_Project.Models
         [DisplayName("Date of Birth")]
         public DateTime BirthDate { get; set; }
 
-        [Required]
-        public DateTime AddDate { get; set; }
+        public DateTime AddDate { get; set; } = DateTime.Now;
     }
 }

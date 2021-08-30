@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Sample_Web_Project.Data;
 using Sample_Web_Project.Helpers;
 using Sample_Web_Project.Models;
@@ -23,11 +24,11 @@ namespace Sample_Web_Project.Controllers
         private readonly IMailService mailService;
         private readonly CryptSettings _cryptSettings;
 
-        public UserController(ApplicationDbContext db, IMailService mailService = null, CryptSettings cryptSettings = null)
+        public UserController(ApplicationDbContext db, IOptions<CryptSettings> cryptSettings, IMailService mailService = null)
         {
             _db = db;
             this.mailService = mailService;
-            _cryptSettings = cryptSettings;
+            _cryptSettings = cryptSettings.Value;
         }
 
         public IActionResult Index()
@@ -46,10 +47,10 @@ namespace Sample_Web_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(User user)
         {
+            string rawPass = user.Password;
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             if (ModelState.IsValid)
             {
-                string rawPass = user.Password;
-                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 _db.Add(user);
                 _db.SaveChanges();
                 return await Login(user.Email, rawPass);
@@ -122,9 +123,10 @@ namespace Sample_Web_Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult ResetPassword(string u)
+        public IActionResult ResetPassword([FromQuery]string u)
         {
-            ViewData["UserId"] = u;
+            ViewData["u"] = u.Replace(" ", "+");
+            ViewData["s"] = _cryptSettings.StringEncriptionKey;
             return View();
         }
 
